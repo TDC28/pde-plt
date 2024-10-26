@@ -8,7 +8,7 @@ import numpy as np
 matplotlib.rcParams["animation.embed_limit"] = 2**128
 
 
-def tridiag(a: int, b: int, c: int, n: int):
+def tridiag(a: float, b: float, c: float, n: int):
     """
     Creates a tridiagonal matrix with values a, b, c
     """
@@ -20,12 +20,15 @@ def tridiag(a: int, b: int, c: int, n: int):
 
 
 x = np.linspace(0, 1, 100)
-n = len(x)
-dt = 0.2
 dx = x[1] - x[0]
+
+dt = 0.2
 tMax = 150
+t = np.linspace(0, tMax, int(tMax / dt))
+
 c = 0.02
 r = c * dt / dx
+n = len(x)
 
 # Boundary conditions
 fLeft = lambda t: 0
@@ -37,20 +40,19 @@ fVelInitial = lambda x: 0
 
 # Computing solution
 A = tridiag(r**2, 2 * (1 - r**2), r**2, n)
-u = fPosInitial(x)
-u[0] = fLeft(0)
-u[-1] = fRight(0)
-u = np.array([u])
 
-t = np.linspace(0, tMax, int(tMax / dt))
+u = np.zeros((len(t), n))
+u[0] = fPosInitial(x)
+u[0][0] = fLeft(dt)
+u[0][-1] = fRight(dt)
 
-for i in range(len(t)):
-    if i == 0:
-        u = np.append(u, np.array([0.5 * (A @ u[0]) + dt * fVelInitial(x)]), axis=0)
+u[1] = 0.5 * (A @ u[0]) + dt * fVelInitial(x)
+u[1][0] = fLeft(dt)
+u[1][-1] = fRight(dt)
 
-    else:
-        u = np.append(u, np.array([A @ u[i] - u[i - 1]]), axis=0)
 
+for i in range(1, len(t) - 1):
+    u[i + 1] = A @ u[i] - u[i - 1]
     u[i + 1][0] = fLeft(t[i])
     u[i + 1][-1] = fRight(t[i])
 
