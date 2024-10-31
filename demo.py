@@ -19,14 +19,14 @@ def tridiag(a: float, b: float, c: float, n: int):
     return np.diag(a_list, -1) + np.diag(b_list) + np.diag(c_list, 1)
 
 
-x = np.linspace(0, 1, 100)
+x = np.linspace(0, 1, 40)
 dx = x[1] - x[0]
 
-dt = 0.2
-tMax = 150
+dt = 0.05
+tMax = 15
 t = np.linspace(0, tMax, int(tMax / dt))
 
-c = 0.02
+c = 0.01
 r = c * dt / dx
 n = len(x)
 
@@ -43,8 +43,8 @@ A = tridiag(r**2, 2 * (1 - r**2), r**2, n)
 
 u = np.zeros((len(t), n))
 u[0] = fPosInitial(x)
-u[0][0] = fLeft(dt)
-u[0][-1] = fRight(dt)
+u[0][0] = fLeft(0)
+u[0][-1] = fRight(0)
 
 u[1] = 0.5 * (A @ u[0]) + dt * fVelInitial(x)
 u[1][0] = fLeft(dt)

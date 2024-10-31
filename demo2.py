@@ -10,14 +10,14 @@ matplotlib.rcParams["animation.embed_limit"] = 2**128
 
 # Define functions f, g, h, k
 f = lambda t, x: 0
-g = lambda t, x: 0
+g = lambda t, x: -0.01
 h = lambda t, x: 0
 k = lambda t, x: 0
 
-x = np.linspace(0, 1, 10)
+x = np.linspace(0, 1, 40)
 dx = x[1] - x[0]
 
-dt = 0.4
+dt = 0.05
 tMax = 15
 t = np.linspace(0, tMax, int(tMax / dt))
 
@@ -25,42 +25,54 @@ m = len(t)
 n = len(x)
 
 # Boundary conditions
-fLeft = lambda t: 0.5 * np.exp(-0.1 * t) * np.sin(t)
-fRight = lambda t: 0.1 + 0.05 * np.cos(2 * t)
+fLeft = lambda t: 0
+fRight = lambda t: 0
 
 # Initial conditions
 fPosInitial = lambda x: np.exp(-200 * (x - 0.5) ** 2)
 fVelInitial = lambda x: 0
 
-# Computing solution (TODO)
+# Computing numerical solution
 u = np.zeros((m, n))
 u[0] = fPosInitial(x)
-u[0][0] = fLeft(dt)
-u[0][-1] = fRight(dt)
+u[0][0] = fLeft(0)
+u[0][-1] = fRight(0)
 
-# TODO: Find sol for t_1
+u[1][0] = fLeft(t[1])
+u[1][-1] = fRight(t[1])
 
+for j in range(1, n - 1):
+    d2udt2 = (
+        k(dt, x[j])
+        - f(dt, x[j]) * fVelInitial(x[j])
+        - g(dt, x[j]) * (u[0][j - 1] - 2 * u[0][j] + u[0][j + 1]) / dx**2
+        - h(dt, x[j]) * (-u[0][j - 1] + u[0][j]) / dx
+    )
+    u[1][j] = u[0][j] + dt * fVelInitial(x[j]) + dt**2 / 2 * d2udt2
+
+# Useful function to simplify math
 r = lambda t, x: dt * dx**2 * f(t, x) + dx**2
 
-for i in range(1, m):
+for i in range(1, m - 1):
     u[i + 1][0] = fLeft(t[i])
     u[i + 1][-1] = fRight(t[i])
 
     for j in range(1, n - 1):
+        # These coefficients can be derived using discrete derivatives
         coefs = []
         coefs.append(-(dt**2) * g(t[i], x[j]) / r(t[i], x[j]))
         coefs.append(
             dt**2 * dx * h(t[i], x[j]) / r(t[i], x[j])
             + 2 * dt**2 * g(t[i], x[j]) / r(t[i], x[j])
             + dt * dx**2 * f(t[i], x[j]) / r(t[i], x[j])
-            + 2 * dx**2 / dt * dx**2 * f(t[i], x[j]) / r(t[i], x[j])
+            + 2 * dx**2 / r(t[i], x[j])
         )
         coefs.append(
             -(dt**2) * dx * h(t[i], x[j]) / r(t[i], x[j])
             - dt**2 * g(t[i], x[j]) / r(t[i], x[j])
         )
         coefs.append(-(dx**2) / r(t[i], x[j]))
-        coefs.append(dt**2 * dx**2 / r(t[i], x[i]))
+        coefs.append(dt**2 * dx**2 / r(t[i], x[j]))
 
         u[i + 1][j] = (
             coefs[0] * u[i][j - 1]
@@ -85,5 +97,5 @@ def update(frame):
     return line
 
 
-ani = animation.FuncAnimation(fig=fig, func=update, frames=len(t), interval=10)
+ani = animation.FuncAnimation(fig=fig, func=update, frames=len(t), interval=15)
 plt.show()
