@@ -9,16 +9,16 @@ matplotlib.rcParams["animation.embed_limit"] = 2**128
 
 
 # Define functions f, g, h, k
-f = lambda t, x: 0
-g = lambda t, x: -0.01
-h = lambda t, x: 0
+f = lambda t, x: 1000
+g = lambda t, x: 0
+h = lambda t, x: -500
 k = lambda t, x: 0
 
-x = np.linspace(0, 1, 40)
+x = np.linspace(0, 5, 20)
 dx = x[1] - x[0]
 
-dt = 0.05
-tMax = 15
+dt = 0.06
+tMax = 25
 t = np.linspace(0, tMax, int(tMax / dt))
 
 m = len(t)
@@ -26,11 +26,11 @@ n = len(x)
 
 # Boundary conditions
 fLeft = lambda t: 0
-fRight = lambda t: 0
+fRight = lambda t: np.sin(2 * np.pi * t / 5)
 
 # Initial conditions
-fPosInitial = lambda x: np.exp(-200 * (x - 0.5) ** 2)
-fVelInitial = lambda x: 0
+fPosInitial = lambda x: 0 * x
+fVelInitial = lambda x: 0 * x
 
 # Computing numerical solution
 u = np.zeros((m, n))
@@ -87,7 +87,7 @@ for i in range(1, m - 1):
 fig, ax = plt.subplots()
 
 line = ax.plot(x, u[0])[0]
-ax.set(xlim=[0, 1], ylim=[-2, 2])
+ax.set(xlim=[x[0], x[-1]], ylim=[-2, 2])
 
 
 def update(frame):
