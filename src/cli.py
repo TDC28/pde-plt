@@ -1,3 +1,6 @@
+import solvers
+
+
 class CLI:
     def __init__(self):
         print("Welcome to PDE-PLT, the linear partial differential equation plotter.\n")
@@ -13,3 +16,12 @@ class CLI:
         self.order = int(order)
         self.n_vars = int(n_vars)
         self.highest_dt_order = int(highest_dt_order)
+
+        if self.order == 1:
+            self.solver = solvers.FirstOrder()
+
+        elif self.highest_dt_order == 1:
+            self.solver = solvers.SecondOrder_OneTime()
+
+        elif self.highest_dt_order == 2:
+            self.solver = solvers.SecondOrder_OneTime()
