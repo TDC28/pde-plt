@@ -6,6 +6,7 @@ class FirstOrderTime:
         self.variables = ["t"]
         self.highest_derivative_orders = [1]
         self.stepsizes = []
+        self.variable_ranges = []
         self.pde_order = self.get_pde_order()
 
         n_vars = int(input("Number of independent variables (Min 1, max 4): "))
@@ -14,20 +15,24 @@ class FirstOrderTime:
             if i == 0:
                 print("\nt selected as variable 1")
                 dt = self.get_stepsize("t")
+                time_range = self.get_variable_range("t")
 
                 self.stepsizes.append(dt)
+                self.variable_ranges.append(time_range)
                 continue
 
             variable = self.get_variable_symbol(i)
             highest_order = self.get_highest_order(variable)
             stepsize = self.get_stepsize(variable)
+            variable_range = self.get_variable_range(variable)
 
             self.variables.append(variable)
             self.highest_derivative_orders.append(highest_order)
             self.stepsizes.append(stepsize)
+            self.variable_ranges.append(variable_range)
 
         self.get_pde()
-        # self.get_initial_condition()
+        self.get_initial_condition()
         # self.get_boundary_conditions()
 
     def get_pde_order(self):
@@ -47,6 +52,7 @@ class FirstOrderTime:
                 variable not in self.variables
                 and variable != "f"
                 and " " not in variable
+                and "." not in variable
             ):
                 return variable
 
@@ -56,7 +62,7 @@ class FirstOrderTime:
         while True:
             try:
                 highest_order = int(
-                    input(f"Highest order of a derivative w.r.t. {variable}: ")
+                    input(f"Highest order of a derivative with respect to {variable}: ")
                 )
                 return highest_order
 
@@ -71,6 +77,16 @@ class FirstOrderTime:
 
             except ValueError:
                 print("Invalid input. Enter a number.")
+
+    def get_variable_range(self, variable):
+        while True:
+            try:
+                lower = float(input(f"Minimum {variable} value: "))
+                upper = float(input(f"Maximum {variable} value: "))
+                return lower, upper
+
+            except:
+                print("Invalid input. Enter numbers.")
 
     def get_pde(self):
         pde = "f_t "
@@ -93,11 +109,11 @@ class FirstOrderTime:
         while True:
             try:
                 variables = ", ".join(self.variables)
-                ic = input(
-                    f"\nEnter initial condition f(0, {variables[3:]})\n\nlambda {variables[3:]}: "
+                ic = f"lambda {variables[3:]}: " + input(
+                    f"\nEnter initial condition f(0, {variables[3:]})\nf(0, {variables[3:]}) = lambda {variables[3:]}: "
                 )
-
-                return NotImplemented
+                self.ic = eval(ic)
+                return
 
             except:
                 print("Invalid input. Make sure the input is a valid lambda function.")
