@@ -1,12 +1,11 @@
 from itertools import combinations_with_replacement
 
+from variables import Variable, VariableList
+
 
 class FirstOrderTime:
     def __init__(self):
-        self.variables = ["t"]
-        self.highest_derivative_orders = [1]
-        self.stepsizes = []
-        self.variable_ranges = []
+        self.variables = VariableList()
         self.pde_order = self.get_pde_order()
 
         n_vars = int(input("Number of independent variables (Min 1, max 4): "))
@@ -14,22 +13,17 @@ class FirstOrderTime:
         for i in range(n_vars):
             if i == 0:
                 print("\nt selected as variable 1")
-                dt = self.get_stepsize("t")
+                timestep = self.get_stepsize("t")
                 time_range = self.get_variable_range("t")
-
-                self.stepsizes.append(dt)
-                self.variable_ranges.append(time_range)
+                self.variables.append(Variable("t", 1, timestep, time_range))
                 continue
 
-            variable = self.get_variable_symbol(i)
-            highest_order = self.get_highest_order(variable)
-            stepsize = self.get_stepsize(variable)
-            variable_range = self.get_variable_range(variable)
+            symbol = self.get_variable_symbol(i)
+            highest_order = self.get_highest_order(symbol)
+            stepsize = self.get_stepsize(symbol)
+            var_range = self.get_variable_range(symbol)
 
-            self.variables.append(variable)
-            self.highest_derivative_orders.append(highest_order)
-            self.stepsizes.append(stepsize)
-            self.variable_ranges.append(variable_range)
+            self.variables.append(Variable(symbol, highest_order, stepsize, var_range))
 
         self.get_pde()
         self.get_initial_condition()
@@ -58,11 +52,11 @@ class FirstOrderTime:
 
             print("Variable already exists or is invalid. Enter a different symbol.")
 
-    def get_highest_order(self, variable):
+    def get_highest_order(self, symbol):
         while True:
             try:
                 highest_order = int(
-                    input(f"Highest order of a derivative with respect to {variable}: ")
+                    input(f"Highest order of a derivative with respect to {symbol}: ")
                 )
                 return highest_order
 
@@ -78,11 +72,11 @@ class FirstOrderTime:
             except ValueError:
                 print("Invalid input. Enter a number.")
 
-    def get_variable_range(self, variable):
+    def get_variable_range(self, symbol):
         while True:
             try:
-                lower = float(input(f"Minimum {variable} value: "))
-                upper = float(input(f"Maximum {variable} value: "))
+                lower = float(input(f"Minimum {symbol} value: "))
+                upper = float(input(f"Maximum {symbol} value: "))
                 return lower, upper
 
             except:
@@ -90,7 +84,7 @@ class FirstOrderTime:
 
     def get_pde(self):
         pde = "f_t "
-        variables = ", ".join(self.variables)
+        symbols = self.variables.list_variables()
         derivatives = []
 
         for i in range(self.pde_order):
@@ -99,18 +93,18 @@ class FirstOrderTime:
             )
 
         for i in range(len(derivatives)):
-            pde += f"+ g{i+1}({variables}) * f_{"".join(derivatives[i])} "
+            pde += f"+ g{i+1}({symbols}) * f_{"".join(str(derivatives[i]))} "
 
-        pde += f"= k({variables})"
+        pde += f"= k({symbols})"
         print("\nPDE has form", pde)
         return NotImplemented
 
     def get_initial_condition(self):
         while True:
             try:
-                variables = ", ".join(self.variables)
-                ic = f"lambda {variables[3:]}: " + input(
-                    f"\nEnter initial condition f(0, {variables[3:]})\nf(0, {variables[3:]}) = lambda {variables[3:]}: "
+                symbols = self.variables.list_variables()
+                ic = f"lambda {symbols[3:]}: " + input(
+                    f"\nEnter initial condition f(0, {symbols[3:]})\nf(0, {symbols[3:]}) = lambda {symbols[3:]}: "
                 )
                 self.ic = eval(ic)
                 return
