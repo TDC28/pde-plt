@@ -89,11 +89,11 @@ class FirstOrderTime:
 
         for i in range(self.pde_order):
             derivatives += list(
-                combinations_with_replacement(self.variables[1:], i + 1)
+                combinations_with_replacement(self.variables.symbols[1:], i + 1)
             )
 
         for i in range(len(derivatives)):
-            pde += f"+ g{i+1}({symbols}) * f_{"".join(str(derivatives[i]))} "
+            pde += f"+ g{i+1}({symbols}) * f_{"".join(derivatives[i])} "
 
         pde += f"= k({symbols})"
         print("\nPDE has form", pde)
@@ -102,9 +102,10 @@ class FirstOrderTime:
     def get_initial_condition(self):
         while True:
             try:
-                symbols = self.variables.list_variables()
-                ic = f"lambda {symbols[3:]}: " + input(
-                    f"\nEnter initial condition f(0, {symbols[3:]})\nf(0, {symbols[3:]}) = lambda {symbols[3:]}: "
+                symbols = self.variables.symbols[1:]
+                inputs = ", ".join(symbols)
+                ic = f"lambda {inputs}: " + input(
+                    f"\nEnter initial condition f(0, {inputs})\nf(0, {inputs}) = lambda {inputs}: "
                 )
                 self.ic = eval(ic)
                 return
