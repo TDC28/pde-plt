@@ -1,5 +1,6 @@
 from itertools import combinations_with_replacement
 
+from conditions import BCList, DirichletBC, InitialCondition, NeumannBC, RobinBC
 from variables import Variable, VariableList
 
 
@@ -25,9 +26,9 @@ class FirstOrderTime:
 
             self.variables.append(Variable(symbol, highest_order, stepsize, var_range))
 
-        self.get_pde()
-        self.get_initial_condition()
-        # self.get_boundary_conditions()
+        # self.get_pde()
+        # self.get_initial_condition()
+        self.get_bcs()
 
     def get_pde_order(self):
         while True:
@@ -113,5 +114,40 @@ class FirstOrderTime:
             except:
                 print("Invalid input. Make sure the input is a valid lambda function.")
 
-    def get_boundary_conditions(self):
+    def get_bcs(self):
+        for var in self.variables:
+            if var.highest_order == 0:
+                continue
+
+            print(f"\nInput {var.highest_order} boundary conditions for variable {var}")
+
+            for _ in range(var.highest_order):
+                bc = self.input_bc(var)
+
+    def input_bc(self, var):
+        while True:
+            try:
+                print("Select BC type")
+                print("1 - Dirichlet")
+                print("2 - Neumann")
+                print("3 - Robin")
+
+                choice = int(input())
+
+                assert 1 <= choice <= 3
+                break
+
+            except:
+                print("Enter a valid input.")
+
+        match choice:
+            case 1:
+                bc = DirichletBC(var)
+
+            case 2:
+                bc = NeumannBC(var)
+
+            case 3:
+                bc = RobinBC(var)
+
         return NotImplemented

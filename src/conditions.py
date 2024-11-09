@@ -1,4 +1,9 @@
 class BoundaryCondition:
+    def __init__(self, var):
+        self.var = var
+
+
+class BCList:
     pass
 
 
@@ -15,4 +20,8 @@ class RobinBC(BoundaryCondition):
 
 
 class InitialCondition:
+    pass
+
+
+class ICList:
     pass
