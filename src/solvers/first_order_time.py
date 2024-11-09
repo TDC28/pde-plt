@@ -7,6 +7,7 @@ from variables import Variable, VariableList
 class FirstOrderTime:
     def __init__(self):
         self.variables = VariableList()
+        self.bcs = BCList()
         self.pde_order = self.get_pde_order()
 
         n_vars = int(input("Number of independent variables (Min 1, max 4): "))
@@ -123,31 +124,35 @@ class FirstOrderTime:
 
             for _ in range(var.highest_order):
                 bc = self.input_bc(var)
+                self.bcs.append(bc)
 
     def input_bc(self, var):
         while True:
             try:
-                print("Select BC type")
+                print("\nSelect BC type")
                 print("1 - Dirichlet")
                 print("2 - Neumann")
                 print("3 - Robin")
 
                 choice = int(input())
 
-                assert 1 <= choice <= 3
+                match choice:
+                    case 1:
+                        bc = DirichletBC(var)
+
+                    case 2:
+                        bc = NeumannBC(var)
+
+                    case 3:
+                        bc = RobinBC(var)
+
+                    case _:
+                        raise Exception("Enter a valid input")
+
                 break
 
             except:
                 print("Enter a valid input.")
 
-        match choice:
-            case 1:
-                bc = DirichletBC(var)
-
-            case 2:
-                bc = NeumannBC(var)
-
-            case 3:
-                bc = RobinBC(var)
-
-        return NotImplemented
+        bc.get_bc()
+        return bc
