@@ -6,30 +6,29 @@ from variables import Variable, VariableList
 
 class FirstOrderTime:
     def __init__(self):
+        self.pde_order = self.get_pde_order()
         self.variables = VariableList()
         self.bcs = BCList()
-        self.pde_order = self.get_pde_order()
 
+        self.initialize_variables()
+        self.get_pde()
+        self.get_ic()
+        self.get_bcs()
+
+    def initialize_variables(self):
         n_vars = int(input("Number of independent variables (Min 1, max 4): "))
+        print("\nt selected as variable 1")
+        timestep = self.get_stepsize("t")
+        time_range = self.get_variable_range("t")
+        self.variables.append(Variable("t", 1, timestep, time_range))
 
-        for i in range(n_vars):
-            if i == 0:
-                print("\nt selected as variable 1")
-                timestep = self.get_stepsize("t")
-                time_range = self.get_variable_range("t")
-                self.variables.append(Variable("t", 1, timestep, time_range))
-                continue
-
+        for i in range(1, n_vars):
             symbol = self.get_variable_symbol(i)
             highest_order = self.get_highest_order(symbol)
             stepsize = self.get_stepsize(symbol)
             var_range = self.get_variable_range(symbol)
 
             self.variables.append(Variable(symbol, highest_order, stepsize, var_range))
-
-        # self.get_pde()
-        # self.get_initial_condition()
-        self.get_bcs()
 
     def get_pde_order(self):
         while True:
@@ -101,7 +100,7 @@ class FirstOrderTime:
         print("\nPDE has form", pde)
         return NotImplemented
 
-    def get_initial_condition(self):
+    def get_ic(self):
         while True:
             try:
                 symbols = self.variables.symbols[1:]
