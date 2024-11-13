@@ -1,5 +1,3 @@
-from itertools import combinations_with_replacement
-
 from conditions import BCList, DirichletBC, InitialCondition, NeumannBC, RobinBC
 from variables import Variable, VariableList
 
@@ -15,11 +13,23 @@ class FirstOrderTime:
         self.get_ic()
         self.get_bcs()
 
+    def get_pde_order(self):
+        while True:
+            try:
+                order = int(input("Enter the order of the PDE (Max 3): "))
+                return order
+
+            except:
+                print("Invalid input. Enter an integer.")
+
     def initialize_variables(self):
         n_vars = int(input("Number of independent variables (Min 1, max 4): "))
+
         print("\nt selected as variable 1")
+
         timestep = self.get_stepsize("t")
         time_range = self.get_variable_range("t")
+
         self.variables.append(Variable("t", 1, timestep, time_range))
 
         for i in range(1, n_vars):
@@ -29,15 +39,6 @@ class FirstOrderTime:
             var_range = self.get_variable_range(symbol)
 
             self.variables.append(Variable(symbol, highest_order, stepsize, var_range))
-
-    def get_pde_order(self):
-        while True:
-            try:
-                order = int(input("Enter the order of the PDE (Max 3): "))
-                return order
-
-            except:
-                print("Invalid input. Enter an integer.")
 
     def get_variable_symbol(self, i):
         while True:
@@ -86,12 +87,7 @@ class FirstOrderTime:
     def get_pde(self):
         pde = "f_t "
         symbols = self.variables.list_variables()
-        derivatives = []
-
-        for i in range(self.pde_order):
-            derivatives += list(
-                combinations_with_replacement(self.variables.symbols[1:], i + 1)
-            )
+        derivatives = self.generate_derivatives()
 
         for i in range(len(derivatives)):
             pde += f"+ g{i+1}({symbols}) * f_{"".join(derivatives[i])} "
@@ -99,6 +95,27 @@ class FirstOrderTime:
         pde += f"= k({symbols})"
         print("\nPDE has form", pde)
         return NotImplemented
+
+    def generate_derivatives(self):
+        derivatives = []
+
+        def backtrack(i=0, curr=[]):
+            if len(curr) == self.pde_order:
+                return
+
+            for j in range(i, len(self.variables)):
+                var = self.variables[j]
+
+                if curr.count(var.symbol) == var.highest_order:
+                    continue
+
+                curr.append(var.symbol)
+                derivatives.append(curr.copy())
+                backtrack(j, curr)
+                curr.pop()
+
+        backtrack()
+        return derivatives[1:]
 
     def get_ic(self):
         while True:

@@ -20,6 +20,9 @@ class VariableList:
     def __getitem__(self, i):
         return self.variables[i]
 
+    def __len__(self):
+        return len(self.variables)
+
     def __itr__(self):
         return iter(self.variables)
 
