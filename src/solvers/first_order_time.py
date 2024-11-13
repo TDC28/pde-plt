@@ -1,13 +1,14 @@
-from conditions import BCList, DirichletBC, InitialCondition, NeumannBC, RobinBC
+from conditions import BCList, DirichletBC, ICList, InitialCondition, NeumannBC, RobinBC
 from variables import Variable, VariableList
 
 
 class FirstOrderTime:
     def __init__(self):
-        self.pde_order = self.get_pde_order()
         self.variables = VariableList()
+        self.ics = ICList()
         self.bcs = BCList()
 
+        self.pde_order = self.get_pde_order()
         self.initialize_variables()
         self.get_pde()
         self.get_ic()
@@ -118,18 +119,9 @@ class FirstOrderTime:
         return derivatives[1:]
 
     def get_ic(self):
-        while True:
-            try:
-                symbols = self.variables.symbols[1:]
-                inputs = ", ".join(symbols)
-                ic = f"lambda {inputs}: " + input(
-                    f"\nEnter initial condition f(0, {inputs})\nf(0, {inputs}) = lambda {inputs}: "
-                )
-                self.ic = eval(ic)
-                return
-
-            except:
-                print("Invalid input. Make sure the input is a valid lambda function.")
+        ic = InitialCondition(0)
+        ic.get_initial_condition(self.variables.symbols)
+        self.ics.append(ic)
 
     def get_bcs(self):
         for var in self.variables:
