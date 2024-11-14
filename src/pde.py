@@ -122,8 +122,8 @@ class PDE:
         return derivatives
 
     def get_ics(self):
-        for i in range(self.variables[0].highest_order):
-            ic = InitialCondition(i)
+        for order in range(self.variables[0].highest_order):
+            ic = InitialCondition(order)
             ic.get_initial_condition(self.variables.symbols)
             self.ics.append(ic)
 
