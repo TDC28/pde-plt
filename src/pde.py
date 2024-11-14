@@ -1,4 +1,5 @@
 from conditions import BCList, DirichletBC, ICList, InitialCondition, NeumannBC, RobinBC
+from functions import CFList, CoefficientFunction
 from variables import Variable, VariableList
 
 
@@ -7,6 +8,7 @@ class PDE:
         self.variables = VariableList()
         self.ics = ICList()
         self.bcs = BCList()
+        self.cfs = CFList()
 
         self.get_variables()
         self.get_pde()
