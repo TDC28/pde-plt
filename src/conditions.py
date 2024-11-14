@@ -34,7 +34,6 @@ class InitialCondition:
         self.order = order
 
     def get_initial_condition(self, variables):
-        # TODO: Test this function
         while True:
             try:
                 symbols = variables[1:]
