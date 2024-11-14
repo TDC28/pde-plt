@@ -1,5 +1,5 @@
 from conditions import BCList, DirichletBC, ICList, InitialCondition, NeumannBC, RobinBC
-from functions import CFList, CoefficientFunction
+from functions import Function, FunctionList
 from variables import Variable, VariableList
 
 
@@ -8,7 +8,7 @@ class PDE:
         self.variables = VariableList()
         self.ics = ICList()
         self.bcs = BCList()
-        self.cfs = CFList()
+        self.cfs = FunctionList()
 
         self.get_variables()
         self.get_pde()
@@ -122,7 +122,10 @@ class PDE:
         return derivatives
 
     def get_ics(self):
-        pass
+        for i in range(self.variables[0].highest_order):
+            ic = InitialCondition(i)
+            ic.get_initial_condition(self.variables.symbols)
+            self.ics.append(ic)
 
     def get_bcs(self):
         for var in self.variables:

@@ -1,12 +1,12 @@
-class CoefficientFunction:
+class Function:
     def __init__(self, function):
-        self.function = function
+        self.fn = function
 
     def __call__(self, *args):
-        return self.function(*args)
+        return self.fn(*args)
 
 
-class CFList:
+class FunctionList:
     def __init__(self):
         self.functions = []
 

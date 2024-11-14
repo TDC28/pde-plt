@@ -1,3 +1,6 @@
+from functions import Function
+
+
 class BoundaryCondition:
     def __init__(self, var):
         self.var = var
@@ -29,8 +32,9 @@ class RobinBC(BoundaryCondition):
         pass
 
 
-class InitialCondition:
+class InitialCondition(Function):
     def __init__(self, order):
+        super().__init__(None)
         self.order = order
 
     def get_initial_condition(self, variables):
@@ -46,7 +50,7 @@ class InitialCondition:
                 ic = f"lambda {inputs}: " + input(
                     f"\nEnter initial condition {func}\nf(0, {inputs}) = lambda {inputs}: "
                 )
-                self.ic = eval(ic)
+                self.fn = eval(ic)
                 return
 
             except:
