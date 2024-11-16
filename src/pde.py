@@ -6,9 +6,9 @@ from variables import Variable, VariableList
 class PDE:
     def __init__(self):
         self.variables = VariableList()
+        self.cfs = FunctionList()
         self.ics = ICList()
         self.bcs = BCList()
-        self.cfs = FunctionList()
 
         self.get_variables()
         self.get_pde()
@@ -129,7 +129,7 @@ class PDE:
 
     def get_bcs(self):
         for var in self.variables:
-            if var.highest_order == 0:
+            if var.highest_order == 0 or var.symbol == "t":
                 continue
 
             print(f"\nInput {var.highest_order} boundary conditions for variable {var}")
@@ -166,5 +166,5 @@ class PDE:
             except:
                 print("Enter a valid input.")
 
-        bc.get_bc()
+        bc.get_bc(self.variables.symbols)
         return bc
