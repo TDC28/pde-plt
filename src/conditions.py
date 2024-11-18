@@ -7,17 +7,6 @@ class BoundaryCondition(Function):
         self.var = var
 
 
-class BCList:
-    def __init__(self):
-        self.bcs = []
-
-    def __itr__(self):
-        return iter(self.bcs)
-
-    def append(self, bc):
-        self.bcs.append(bc)
-
-
 class DirichletBC(BoundaryCondition):
     def get_bc(self, variables):
         print("Choose a boundary")
@@ -124,14 +113,3 @@ class InitialCondition(Function):
 
             except:
                 print("Invalid input. Make sure the input is a valid lambda function.")
-
-
-class ICList:
-    def __init__(self):
-        self.ics = []
-
-    def __itr__(self):
-        return iter(self.ics)
-
-    def append(self, ic):
-        self.ics.append(ic)

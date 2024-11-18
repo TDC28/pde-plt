@@ -1,4 +1,4 @@
-from conditions import BCList, DirichletBC, ICList, InitialCondition, NeumannBC, RobinBC
+from conditions import DirichletBC, InitialCondition, NeumannBC, RobinBC
 from functions import Function, FunctionList
 from variables import Variable, VariableList
 
@@ -7,8 +7,8 @@ class PDE:
     def __init__(self):
         self.variables = VariableList()
         self.cfs = FunctionList()
-        self.ics = ICList()
-        self.bcs = BCList()
+        self.ics = FunctionList()
+        self.bcs = FunctionList()
 
         self.get_variables()
         self.get_pde()
@@ -96,7 +96,18 @@ class PDE:
         pde = pde[:-2]
         pde += f"= k({symbols})"
         print("\nPDE has form", pde)
-        return NotImplemented
+
+        for i in range(len(derivatives)):
+            while True:
+                try:
+                    pde_text = input(f"g{i+1}({symbols}) = lambda {symbols}: ")
+                    pde = eval(f"lambda {symbols}: " + pde_text)
+                    break
+
+                except:
+                    print("Invalid input. Make sure input is a valid lambda function.")
+
+            self.cfs.append(pde)
 
     def generate_derivatives(self):
         derivatives = []
