@@ -86,16 +86,16 @@ class PDE:
             except:
                 print("Invalid input.")
 
-        pde = ""
+        pde_form = ""
         symbols = ", ".join(self.variables.symbols)
         derivatives = self.generate_derivatives()
 
         for i in range(len(derivatives)):
-            pde += f"g{i+1}({symbols}) * f_{"".join(derivatives[i])} + "
+            pde_form += f"g{i+1}({symbols}) * f_{"".join(derivatives[i])} + "
 
-        pde = pde[:-2]
-        pde += f"= k({symbols})"
-        print("\nPDE has form", pde)
+        pde_form = pde_form[:-2]
+        pde_form += f"= k({symbols})"
+        print("\nPDE has form", pde_form, "\n")
 
         for i in range(len(derivatives)):
             while True:
@@ -107,7 +107,7 @@ class PDE:
                 except:
                     print("Invalid input. Make sure input is a valid lambda function.")
 
-            self.cfs.append(pde)
+            self.cfs.append(Function(pde))
 
     def generate_derivatives(self):
         derivatives = []
