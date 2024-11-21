@@ -16,7 +16,7 @@ class PDE:
         self.get_bcs()
 
     def get_variables(self):
-        n_vars = int(input("Number of independent variables (Min 1, max 4): "))
+        n_vars = int(input("Number of independent variables (Min 2, max 3): "))
 
         print("\nt selected as variable 1")
 

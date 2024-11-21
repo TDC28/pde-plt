@@ -11,14 +11,14 @@ class DirichletBC(BoundaryCondition):
     def get_bc(self, variables):
         print("Choose a boundary")
         print(
-            f"\n1 - ({self.var} = {self.var.value_range[0]})\n2 - ({self.var} = {self.var.value_range[1]})"
+            f"\n1 - ({self.var} = {self.var.value_span[0]})\n2 - ({self.var} = {self.var.value_span[1]})"
         )
 
         while True:
             try:
                 choice = int(input())
 
-                self.boundary = self.var.value_range[choice - 1]
+                self.boundary = self.var.value_span[choice - 1]
                 break
 
             except:
@@ -27,7 +27,7 @@ class DirichletBC(BoundaryCondition):
         var_index = variables.index(self.var.symbol)
 
         input_symbols = variables.copy()
-        input_symbols[var_index] = str(self.var.value_range[choice - 1])
+        input_symbols[var_index] = str(self.var.value_span[choice - 1])
         inputs = ", ".join(input_symbols)
 
         lambda_vars = variables.copy()
@@ -50,14 +50,14 @@ class NeumannBC(BoundaryCondition):
     def get_bc(self, variables):
         print("Choose a boundary")
         print(
-            f"\n1 - ({self.var} = {self.var.value_range[0]})\n2 - ({self.var} = {self.var.value_range[1]})"
+            f"\n1 - ({self.var} = {self.var.value_span[0]})\n2 - ({self.var} = {self.var.value_span[1]})"
         )
 
         while True:
             try:
                 choice = int(input())
 
-                self.boundary = self.var.value_range[choice - 1]
+                self.boundary = self.var.value_span[choice - 1]
                 break
 
             except:
@@ -66,7 +66,7 @@ class NeumannBC(BoundaryCondition):
         var_index = variables.index(self.var.symbol)
 
         input_symbols = variables.copy()
-        input_symbols[var_index] = str(self.var.value_range[choice - 1])
+        input_symbols[var_index] = str(self.var.value_span[choice - 1])
         inputs = ", ".join(input_symbols)
 
         lambda_vars = variables.copy()

@@ -1,15 +1,33 @@
+import numpy as np
+
+
 class Variable:
-    def __init__(self, symbol, highest_order, stepsize, value_range):
+    def __init__(
+        self,
+        symbol: str,
+        highest_order: int,
+        stepsize: float,
+        value_span: tuple[float, float],
+    ):
         self.symbol = symbol
         self.highest_order = highest_order
         self.stepsize = stepsize
-        self.value_range = value_range
+        self.value_span = value_span
+        self.values = np.linspace(*value_span, int(self.value_range / stepsize) + 1)
 
     def __str__(self):
         return self.symbol
 
     def __eq__(self, other):
         return isinstance(other, Variable) and other.symbol == self.symbol
+
+    @property
+    def value_range(self):
+        return self.value_span[1] - self.value_span[0]
+
+    @property
+    def n_vals(self):
+        return len(self.values)
 
 
 class VariableList:
